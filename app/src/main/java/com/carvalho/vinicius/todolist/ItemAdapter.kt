@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.item_lista.view.*
 
-class ItemAdapter(val itens: List<String>)
+class ItemAdapter(val itens: List<Atividades>)
     : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    var clique: ((item:String, index: Int) -> Unit)? = null
+    var clique: ((item:Atividades, index: Int) -> Unit)? = null
     var cliqueFeito: ((index: Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,11 +23,11 @@ class ItemAdapter(val itens: List<String>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item: String = itens[position]
+        val item: Atividades = itens[position]
         holder.bindView(item, clique, cliqueFeito)
     }
 
-    fun configuraClique(clique: ((item:String, index: Int) -> Unit)) {
+    fun configuraClique(clique: ((item:Atividades, index: Int) -> Unit)) {
         this.clique = clique
     }
     fun configuraCliqueFeito(cliqueFeito: ((index: Int) -> Unit)){
@@ -36,8 +36,8 @@ class ItemAdapter(val itens: List<String>)
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(item: String, clique: ((item:String, index: Int) -> Unit)?, cliqueFeito: ((index: Int) -> Unit)?) {
-            itemView.itemNome.text = item
+        fun bindView(item: Atividades, clique: ((item:Atividades, index: Int) -> Unit)?, cliqueFeito: ((index: Int) -> Unit)?) {
+            itemView.itemNome.text = item.nome
 
             if (clique != null) {
                 itemView.setOnClickListener {

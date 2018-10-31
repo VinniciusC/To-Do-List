@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_lista.*
 
 class Lista : AppCompatActivity() {
 
-    val itens = ArrayList<String>()
+    val itens = ArrayList<Atividades>()
     private val ADICIONA_ITEM = 1
     private val ITEM = "Item"
     var index: Int = -1
@@ -44,7 +44,7 @@ class Lista : AppCompatActivity() {
             item, index ->
             this.index = index
             val editarItem = Intent(this, NovoItem::class.java)
-            editarItem.putExtra(ITEM,itens.get(index))
+            editarItem.putExtra(NovoItem.ITEM, itens.get(index))
             startActivityForResult(editarItem,ADICIONA_ITEM)
         }
 
@@ -55,7 +55,7 @@ class Lista : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK){
-            val adicionarItem: String? = data?.getStringExtra("NovoItem")
+            val adicionarItem: Atividades? = data?.getSerializableExtra("NovoItem") as Atividades?
             if (adicionarItem != null) {
                 if (index>=0){
                     itens.set(index,adicionarItem)

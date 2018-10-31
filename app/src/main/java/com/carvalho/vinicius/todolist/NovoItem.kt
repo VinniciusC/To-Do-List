@@ -17,13 +17,16 @@ class NovoItem : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_novo_item)
 
-        val item = intent.getStringExtra(ITEM)
-        print(item)
-        novo_item.setText(item)
+        val item:Atividades? = intent.getSerializableExtra(ITEM) as Atividades?
+        if (item != null){
+            novo_item.setText(item.nome)
+        }
+
 
         salvaritem.setOnClickListener(){
+                val item = Atividades(novo_item.text.toString())
                 val abreLista = Intent(this, Lista::class.java)
-                abreLista.putExtra(NovoItem, novo_item.text.toString())
+                abreLista.putExtra(NovoItem, item)
                 setResult(Activity.RESULT_OK, abreLista)
                 finish()
         }
