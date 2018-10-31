@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ToDoList</string>
+    <string name="novo">Novo</string>
+    <string name="novo_item">Novo item</string>
+    <string name="salvar">Salvar</string>
+    <string name="nome">Nome</string>
+    <string name="feito">Feito</string>
+</resources>
