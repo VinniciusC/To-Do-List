@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.item_lista.view.*
 class ItemAdapter(val itens: List<Atividades>)
     : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
-    var clique: ((item:Atividades, index: Int) -> Unit)? = null
+    var clique: ((index: Int) -> Unit)? = null
     var cliqueFeito: ((index: Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +27,7 @@ class ItemAdapter(val itens: List<Atividades>)
         holder.bindView(item, clique, cliqueFeito)
     }
 
-    fun configuraClique(clique: ((item:Atividades, index: Int) -> Unit)) {
+    fun configuraClique(clique: ((index: Int) -> Unit)) {
         this.clique = clique
     }
     fun configuraCliqueFeito(cliqueFeito: ((index: Int) -> Unit)){
@@ -36,12 +36,12 @@ class ItemAdapter(val itens: List<Atividades>)
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(item: Atividades, clique: ((item:Atividades, index: Int) -> Unit)?, cliqueFeito: ((index: Int) -> Unit)?) {
+        fun bindView(item: Atividades, clique: ((index: Int) -> Unit)?, cliqueFeito: ((index: Int) -> Unit)?) {
             itemView.itemNome.text = item.nome
 
             if (clique != null) {
                 itemView.setOnClickListener {
-                    clique.invoke(item,adapterPosition)
+                    clique.invoke(adapterPosition)
                 }
             }
             if(cliqueFeito != null){

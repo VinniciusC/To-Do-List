@@ -5,7 +5,7 @@ import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 
 @Entity
-class Atividades (val nome: String,
+class Atividades(var nome: String,
                   @PrimaryKey (autoGenerate = true)
-                  val id: Int = 0):Serializable{
+                  var id: Int = 0):Serializable{
 }

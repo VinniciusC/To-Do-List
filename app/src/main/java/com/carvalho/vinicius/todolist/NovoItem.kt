@@ -1,10 +1,10 @@
 package com.carvalho.vinicius.todolist
 
-import android.app.Activity
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_novo_item.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class NovoItem : AppCompatActivity() {
 
@@ -13,22 +13,30 @@ class NovoItem : AppCompatActivity() {
         const val ITEM = "Item"
     }
 
+    var item: Atividades? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_novo_item)
 
-        val item:Atividades? = intent.getSerializableExtra(ITEM) as Atividades?
-        if (item != null){
-            novo_item.setText(item.nome)
-        }
+        item = intent.getSerializableExtra(ITEM) as Atividades?
+        novo_item.setText(item?.nome)
+
 
 
         salvaritem.setOnClickListener(){
-                val item = Atividades(novo_item.text.toString())
-                val abreLista = Intent(this, Lista::class.java)
-                abreLista.putExtra(NovoItem, item)
-                setResult(Activity.RESULT_OK, abreLista)
-                finish()
+                if(item == null){
+                    item = Atividades(novo_item.text.toString())
+                }else{
+                    item?.nome = novo_item.text.toString()
+                }
+
+            val itemDao: ToDoDAO = AppDatabase.getInstance(this).ToDoDAO()
+            doAsync {
+                itemDao.insert(item!!)
+                uiThread {
+                    finish()}
+            }
         }
     }
 

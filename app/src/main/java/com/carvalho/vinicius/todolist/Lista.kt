@@ -1,19 +1,17 @@
 package com.carvalho.vinicius.todolist
 
-import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_lista.*
+import org.jetbrains.anko.activityUiThreadWithContext
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class Lista : AppCompatActivity() {
 
-    val itens = ArrayList<Atividades>()
-    private val ADICIONA_ITEM = 1
-    private val ITEM = "Item"
-    var index: Int = -1
-    val adapter = ItemAdapter(itens)
+    var itens = ArrayList<Atividades>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,12 +20,7 @@ class Lista : AppCompatActivity() {
 
         Novobutton.setOnClickListener {
             val novatarefa = Intent(this,NovoItem::class.java)
-            startActivityForResult(novatarefa,1)
-        }
-
-        adapter.configuraCliqueFeito { index ->
-            itens.removeAt(index)
-            carregaLista()
+            startActivity(novatarefa)
         }
 
     }
@@ -38,34 +31,37 @@ class Lista : AppCompatActivity() {
     }
 
     fun carregaLista() {
-        val layoutManager = LinearLayoutManager(this)
 
-        adapter.configuraClique {
-            item, index ->
-            this.index = index
-            val editarItem = Intent(this, NovoItem::class.java)
-            editarItem.putExtra(NovoItem.ITEM, itens.get(index))
-            startActivityForResult(editarItem,ADICIONA_ITEM)
+        val todoDAO = AppDatabase.getInstance(this).ToDoDAO()
+        doAsync {
+            itens = todoDAO.getAll() as ArrayList<Atividades>
+
+            activityUiThreadWithContext {
+                val layoutManager = LinearLayoutManager(this)
+                val adapter = ItemAdapter(itens)
+
+                adapter.configuraClique { index ->
+                    val editarItem = Intent(this, NovoItem::class.java)
+                    editarItem.putExtra(NovoItem.ITEM, itens.get(index))
+                    startActivity(editarItem)
+                }
+
+                adapter.configuraCliqueFeito { index ->
+                    doAsync {
+                        todoDAO.delete(itens.get(index))
+
+                        uiThread {
+                            carregaLista()
+                        }
+                    }
+                }
+
+                rvLista.adapter = adapter
+                rvLista.layoutManager = layoutManager
+
+
+            }
         }
 
-        rvLista.adapter = adapter
-        rvLista.layoutManager = layoutManager
-
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK){
-            val adicionarItem: Atividades? = data?.getSerializableExtra("NovoItem") as Atividades?
-            if (adicionarItem != null) {
-                if (index>=0){
-                    itens.set(index,adicionarItem)
-                    index = -1
-
-                }else{
-                itens.add(adicionarItem)
-            }
-            }
-        }
-    }
-
 }
